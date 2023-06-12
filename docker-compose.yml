@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+
+  langchain-server:
+#    image: ds-api-server-kyc:latest
+    image: gradio_demo:latest
+    command: python3 main2.py
+    container_name: gradio_demo
+    ports:
+      - 7860:7860
+      # - 8555:8501
+
+
+    logging:
+      driver: "json-file"
+      options:
+          max-size: "1200m"
+    volumes:
+      - /Users/akshatsrivastava/akshat_workspace/gradio_demo:/app
+    
+    # network_mode: "host"
+    # networks:
+    #   - host
+  
+  # redis:
+  #   container_name: redis
+  #   image: redis:6-alpine
+  #   expose:
+  #     - '6379'
+  #   ports:
+  #     - 6379:6379 
+    
+  #   volumes:
+  #     - /Users/akshatsrivastava/akshat_workspace/redis_bot:/app
+    
+    # network_mode: "host"
+    # networks:
+    #   - host
+
+
+    # network_mode: "host"

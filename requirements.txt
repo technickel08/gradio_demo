@@ -1,0 +1,5 @@
+gradio
+pyttsx3
+openai
+audioread
+sseclient-py 
