@@ -55,17 +55,17 @@ import audioread
 #             yield file_path
 
 
-def audio_stream_1(audio,lang,context):
+def audio_stream_1(audio,lang,context,user_id,session_id):
     print("audio2audio streaming started")
-    url = f"http://ec2-3-110-105-77.ap-south-1.compute.amazonaws.com:8501/audio2audio_stream?user_id=12345678&selected_model=gpt-3.5-turbo&context_enable={context}&voice_code=en-IN&voice_gender=FEMALE&voice_name=en-IN-Standard-A&tts_lang={lang}"
+    url = f"http://192.168.1.7:8555/audio2audio_stream?user_id={user_id}&session_id={session_id}&selected_model=gpt-3.5-turbo&context_enable={context}&voice_code=en-IN&voice_gender=FEMALE&voice_name=en-IN-Standard-A&tts_lang={lang}"
     print(audio,"*"*10)
     payload = {}
     files=[
     ('audio',(audio,open(audio,'rb'),'application/octet-stream'))
     ]
     headers = {
-  'accept': 'application/json'
-                }
+  'accept': 'application/json',
+  'Authorization': "Basic ZHNfdXNlcjpkc0BiaGFyYXRwZTEyMw=="}
 
     response = requests.request("POST", url, headers=headers, data=payload, files=files,stream=True)
     client = sseclient.SSEClient(response)
@@ -88,12 +88,16 @@ def audio_stream_1(audio,lang,context):
                 file_name = datetime.today()
                 file_path = "/app/out/audio_out.wav"
                 audio_out = eval(event.data)
+                audio_base64 = base64.b64encode(audio_out).decode("utf-8")
+                audio_player = f'<audio src="data:audio/mpeg;base64,{audio_base64}" controls autoplay></audio>'
                 text_out = text_out+"\n"+event.event
                 wav_file = open(file_path, "wb")
                 wav_file.write(audio_out)
                 wav_file.close()
                 print(file_path,"file saved")
-                yield file_path,text_out
+                # if "img src" in event.event:
+                #     audio_player = None
+                yield audio_player,text_out
 
 
 
@@ -164,11 +168,18 @@ def transcribe(audio):
 #     return True
 # audio_out.change(fn= dummy,inputs=[],_js=autoplay_audio)
 # chatbot = gr.Chatbot([], elem_id="chatbot").style(height=750)
+
+
+
+html = gr.HTML()
 ui = gr.Interface(fn=audio_stream_1,
                   inputs=[gr.Audio(source='microphone',type='filepath'),
                           gr.Radio(["hi","en"], label="language", info="language selector"),
-                          gr.Radio([True,False], label="enable_context", info="enable_context selector")], 
-                  outputs= [gr.Audio( elem_id="speaker"),gr.Textbox()]
+                          gr.Radio([True,False], label="enable_context", info="enable_context selector"),
+                          gr.Textbox(label = "enter User ID"),
+                          gr.Textbox(label = "enter session ID")
+                          ], 
+                  outputs= [html,gr.HTML()]
                   )
 
 # with gr.Blocks() as demo:
