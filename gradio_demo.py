@@ -57,7 +57,7 @@ import audioread
 
 def audio_stream_1(audio,lang,context,user_id,session_id):
     print("audio2audio streaming started")
-    url = f"http://192.168.1.7:8555/audio2audio_stream?user_id={user_id}&session_id={session_id}&selected_model=gpt-3.5-turbo&context_enable={context}&voice_code=en-IN&voice_gender=FEMALE&voice_name=en-IN-Standard-A&tts_lang={lang}"
+    url = f"http://ec2-3-110-105-77.ap-south-1.compute.amazonaws.com:8509/audio2audio_stream?user_id={user_id}&session_id={session_id}&selected_model=gpt-3.5-turbo&context_enable={context}&voice_code=en-IN&voice_gender=FEMALE&voice_name=en-IN-Standard-A&tts_lang={lang}"
     print(audio,"*"*10)
     payload = {}
     files=[
